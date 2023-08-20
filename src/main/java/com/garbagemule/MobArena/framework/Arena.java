@@ -256,4 +256,6 @@ public interface Arena
     Player getLastPlayerStanding();
 
     AutoStartTimer getAutoStartTimer();
+
+    void remap(Player player);
 }

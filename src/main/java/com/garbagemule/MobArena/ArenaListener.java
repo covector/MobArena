@@ -95,6 +95,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
+import org.bukkit.Bukkit;
+
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
+
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -129,6 +134,8 @@ public class ArenaListener
 
     private EnumSet<EntityType> excludeFromRetargeting;
 
+    private NamespacedKey allyMonsterKey;
+
     public ArenaListener(Arena arena, MobArena plugin) {
         this.plugin = plugin;
         this.arena = arena;
@@ -158,6 +165,8 @@ public class ArenaListener
             EntityType.ELDER_GUARDIAN,
             EntityType.GUARDIAN
         );
+
+        this.allyMonsterKey = new NamespacedKey(plugin, "ally-monster");
     }
 
     void pvpActivate() {
@@ -650,6 +659,10 @@ public class ArenaListener
     public void onEntityDamage(EntityDamageEvent event) {
         Entity damagee = event.getEntity();
 
+        if (damagee instanceof LivingEntity && damagee.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE)) {
+            return;
+        }
+
         EntityDamageByEntityEvent edbe = (event instanceof EntityDamageByEntityEvent) ? (EntityDamageByEntityEvent) event : null;
         Entity damager = null;
 
@@ -665,6 +678,15 @@ public class ArenaListener
 
             if (damager instanceof TNTPrimed) {
                 damager = ((TNTPrimed) damager).getSource();
+            }
+        }
+
+        if (damager instanceof LivingEntity && damager.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE)) {
+            if (damagee instanceof Player) {
+                event.setCancelled(true);
+                return;
+            } else {
+                return;
             }
         }
 
@@ -822,6 +844,13 @@ public class ArenaListener
 
         Entity entity = event.getEntity();
         Entity target = event.getTarget();
+
+        if (entity instanceof LivingEntity && entity.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE) && !(target instanceof Player)) {
+            return;
+        }
+        if (target instanceof LivingEntity && target.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE)) {
+            return;
+        }
 
         if (isArenaPet(entity)) {
             onPetTarget(event, target);
@@ -1217,6 +1246,10 @@ public class ArenaListener
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
         if (!arena.isEnabled() || (!arena.inArena(p) && !arena.inLobby(p) && !arena.inSpec(p))) {
+            return;
+        }
+
+        if (arena.inArena(p) || arena.inSpec(p) || arena.isDead(p)) {
             return;
         }
 

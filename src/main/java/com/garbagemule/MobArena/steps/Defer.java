@@ -1,5 +1,7 @@
 package com.garbagemule.MobArena.steps;
 
+import org.bukkit.entity.Player;
+
 /**
  * This wrapper allows a delegate {@link Step}'s {@link Step#run() run()}
  * operation to be deferred until this wrapper's {@link Step#undo() undo()}
@@ -32,5 +34,9 @@ class Defer implements Step {
 
     static StepFactory it(StepFactory factory) {
         return player -> new Defer(factory.create(player));
+    }
+
+    @Override
+    public void remap(Player player) {
     }
 }

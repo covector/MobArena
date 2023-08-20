@@ -65,4 +65,10 @@ class PlayerMultiStep extends PlayerStep {
     static StepFactory create(List<StepFactory> factories, Logger logger) {
         return player -> new PlayerMultiStep(player, factories, logger);
     }
+
+    @Override
+    public void remap(Player newPlayer) {
+        super.remap(newPlayer);
+        history.forEach(step -> step.remap(newPlayer));
+    }
 }

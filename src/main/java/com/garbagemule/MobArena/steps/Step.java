@@ -1,5 +1,7 @@
 package com.garbagemule.MobArena.steps;
 
+import org.bukkit.entity.Player;
+
 /**
  * Steps are small, self-contained pieces of behavior.
  * <p>
@@ -25,4 +27,6 @@ public interface Step {
      * method. Doing so is silly.
      */
     void undo();
+
+    public void remap(Player player);
 }

@@ -309,6 +309,10 @@ public class MAGlobalListener implements Listener
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void playerJoin(PlayerJoinEvent event) {
+        if (am.remap(event.getPlayer())) {
+            return;
+        }
+
         InventoryManager.restoreFromFile(plugin, event.getPlayer());
         if (!am.notifyOnUpdates() || !event.getPlayer().isOp()) return;
 

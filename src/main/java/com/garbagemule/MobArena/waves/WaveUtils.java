@@ -27,28 +27,30 @@ public class WaveUtils
             spawnpoints = arena.getRegion().getSpawnpointList();
         }
 
+        return spawnpoints;
+
         // Loop through each one and check if any players are in range.
-        for (Location l : spawnpoints) {
-            for (Player p : players) {
-                if (MAUtils.distanceSquared(plugin, p, l) >= MobArena.MIN_PLAYER_DISTANCE_SQUARED) {
-                    continue;
-                }
-                result.add(l);
-                break;
-            }
-        }
+        // for (Location l : spawnpoints) {
+        //     for (Player p : players) {
+        //         if (MAUtils.distanceSquared(plugin, p, l) >= MobArena.MIN_PLAYER_DISTANCE_SQUARED) {
+        //             continue;
+        //         }
+        //         result.add(l);
+        //         break;
+        //     }
+        // }
 
         // If no spawnpoints in range, just return all of them.
-        if (result.isEmpty()) {
-            String locs = "";
-            for (Player p : players) {
-                Location l = p.getLocation();
-                locs += "(" + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ() + ") ";
-            }
-            plugin.getLogger().warning("The following locations in arena '" + arena.configName() + "' are not covered by any spawnpoints:" + locs);
-            return spawnpoints;
-        }
-        return result;
+        // if (result.isEmpty()) {
+        //     String locs = "";
+        //     for (Player p : players) {
+        //         Location l = p.getLocation();
+        //         locs += "(" + l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ() + ") ";
+        //     }
+        //     plugin.getLogger().warning("The following locations in arena '" + arena.configName() + "' are not covered by any spawnpoints:" + locs);
+        //     return spawnpoints;
+        // }
+        // return result;
     }
 
     public static Player getClosestPlayer(Arena arena, Entity e)

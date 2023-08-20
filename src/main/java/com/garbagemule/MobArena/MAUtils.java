@@ -304,4 +304,15 @@ public class MAUtils
         am.reloadConfig();
         return true;
     }
+
+    public static boolean RemapPlayerSet(Set<Player> playerSet, Player player) {
+        for (Player p: playerSet) {
+            if (p.getUniqueId().toString().equals(player.getUniqueId().toString())) {
+                playerSet.remove(p);
+                playerSet.add(player);
+                return true;
+            }
+        }
+        return false;
+    }
 }

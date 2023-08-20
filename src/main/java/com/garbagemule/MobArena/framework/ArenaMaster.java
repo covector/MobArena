@@ -138,4 +138,6 @@ public interface ArenaMaster
     void reloadConfig();
 
     void saveConfig();
+
+    boolean remap(Player player);
 }

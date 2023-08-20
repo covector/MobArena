@@ -123,4 +123,8 @@ public class ArenaPlayerStatistics
 
         return (s1wave > s2wave ? -1 : 1);
     }
+
+    public void remap(Player newPlayer) {
+        this.playerName = newPlayer.getName();
+    }
 }

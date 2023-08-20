@@ -682,4 +682,17 @@ public class ArenaMasterImpl implements ArenaMaster
     public void saveConfig() {
         plugin.saveConfig();
     }
+
+    public boolean remap(Player player) {
+        for (Player playerKey: arenaMap.keySet()) {
+            if (playerKey.getUniqueId().toString().equals(player.getUniqueId().toString())) {
+                Arena arena = arenaMap.get(playerKey);
+                arena.remap(player);
+                arenaMap.remove(playerKey);
+                arenaMap.put(player, arena);
+                return true;
+            }
+        }
+        return false;
+    }
 }

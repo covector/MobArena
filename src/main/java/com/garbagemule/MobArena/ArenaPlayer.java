@@ -57,4 +57,9 @@ public class ArenaPlayer
     public ArenaPlayerStatistics getStats() {
         return stats;
     }
+
+    public void remap(Player newPlayer) {
+        this.player = newPlayer;
+        stats.remap(newPlayer);
+    }
 }

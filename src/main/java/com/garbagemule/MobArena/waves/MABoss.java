@@ -25,8 +25,11 @@ public class MABoss
      */
     public MABoss(LivingEntity entity, double maxHealth) {
         try {
+            // health issue debug
             entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+            Bukkit.broadcastMessage("Max health is " + entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             entity.setHealth(maxHealth);
+            Bukkit.broadcastMessage("Set health to " + maxHealth);
         } catch (IllegalArgumentException ex) {
             // Spigot... *facepalm*
             Bukkit.getLogger().severe("[MobArena] Can't set health to " + maxHealth + ", using default health. If you are running Spigot, set 'maxHealth' higher in your Spigot settings.");

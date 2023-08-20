@@ -233,8 +233,10 @@ public class MASpawnThread implements Runnable
                 // Set the health.
                 int health = (int) Math.max(1D, e.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * mul);
                 try {
-                    e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
-                    e.setHealth(health);
+                    if (w.getType() != WaveType.BOSS) {
+                        e.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(health);
+                        e.setHealth(health);
+                    }
                 } catch (IllegalArgumentException ex) {
                     // Spigot... *facepalm*
                     plugin.getLogger().severe("Can't set health to " + health + ", using default health. If you are running Spigot, set 'maxHealth' higher in your Spigot settings.");

@@ -1646,4 +1646,31 @@ public class ArenaImpl implements Arena
     public String toString() {
         return ((enabled && region.isSetup()) ? ChatColor.GREEN : ChatColor.GRAY) + configName();
     }
+
+    @Override
+    public void remap(Player player) {
+        MAUtils.RemapPlayerSet(arenaPlayers, player);
+        MAUtils.RemapPlayerSet(specPlayers, player);
+        MAUtils.RemapPlayerSet(deadPlayers, player);
+
+        for (Player playerKey: arenaPlayerMap.keySet()) {
+            if (playerKey.getUniqueId().toString().equals(player.getUniqueId().toString())) {
+                ArenaPlayer arenaPlayer = arenaPlayerMap.get(playerKey);
+                arenaPlayer.remap(player);
+                arenaPlayerMap.remove(playerKey);
+                arenaPlayerMap.put(player, arenaPlayer);
+                break;
+            }
+        }
+
+        for (Player playerKey: histories.keySet()) {
+            if (playerKey.getUniqueId().toString().equals(player.getUniqueId().toString())) {
+                Step step = histories.get(playerKey);
+                step.remap(player);
+                histories.remove(playerKey);
+                histories.put(player, step);
+                break;
+            }
+        }
+    }
 }

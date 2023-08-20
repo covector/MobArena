@@ -3,10 +3,15 @@ package com.garbagemule.MobArena.steps;
 import org.bukkit.entity.Player;
 
 abstract class PlayerStep implements Step {
-    protected final Player player;
+    protected Player player;
 
     protected PlayerStep(Player player) {
         this.player = player;
+    }
+
+    @Override
+    public void remap(Player newPlayer) {
+        this.player = newPlayer;
     }
 
     @Override
