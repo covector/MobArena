@@ -1264,6 +1264,10 @@ public class ArenaListener
             return;
         }
 
+        if (arena.inArena(p) || arena.inSpec(p) || arena.isDead(p)) {
+            return;
+        }
+
         arena.playerLeave(p);
         banned.add(p);
         scheduleUnban(p, 20);
