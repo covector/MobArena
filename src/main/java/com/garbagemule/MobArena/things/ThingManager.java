@@ -16,7 +16,9 @@ public class ThingManager implements ThingParser {
         parsers.add(new MoneyThingParser(plugin));
         parsers.add(new PermissionThingParser(plugin));
         parsers.add(new PotionEffectThingParser());
+        parsers.add(new InventoryThingParser(plugin.getServer()));
         items = parser;
+        items.register(new SavedItemParser(plugin));
     }
 
     public ThingManager(MobArena plugin) {

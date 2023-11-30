@@ -91,10 +91,7 @@ public class MASpawnThread implements Runnable
         }
 
         int delay = arena.getSettings().getInt("first-wave-delay", 5) * 20;
-        task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            arena.getEventListener().pvpActivate();
-            this.run();
-        }, delay);
+        task = Bukkit.getScheduler().runTaskLater(plugin, this, delay);
     }
 
     public void stop() {
@@ -102,8 +99,6 @@ public class MASpawnThread implements Runnable
             plugin.getLogger().warning("Can't stop non-existent spawner in arena " + arena.configName() + ". This should never happen.");
             return;
         }
-
-        arena.getEventListener().pvpDeactivate();
 
         task.cancel();
         task = null;
@@ -245,6 +240,11 @@ public class MASpawnThread implements Runnable
                         ((BossWave) w).setBossName("SPIGOT ERROR");
                     } else {
                         e.setCustomName("SPIGOT ERROR");
+                    }
+                    for (Player p : plugin.getServer().getOnlinePlayers()) {
+                        if (p.hasPermission("mobarena.admin.errors")) {
+                            arena.getMessenger().tell(p, "Failed to set boss health (" + health + ") in arena " + arena.configName() + " (wave " + wave + ") because Spigot 'maxHealth' is too low. See console for details.");
+                        }
                     }
                 }
 
