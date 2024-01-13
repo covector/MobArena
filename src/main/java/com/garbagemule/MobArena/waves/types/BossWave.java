@@ -27,7 +27,7 @@ public class BossWave extends AbstractWave
 {
     private String bossName;
 
-    private MACreature monster;
+    private List<MACreature> monster;
     private Set<MABoss> bosses;
 
     private Formula health;
@@ -40,7 +40,7 @@ public class BossWave extends AbstractWave
     private ThingPicker reward;
     private List<ItemStack> drops;
 
-    public BossWave(MACreature monster) {
+    public BossWave(List<MACreature> monster) {
         this.monster   = monster;
         this.bosses    = new HashSet<>();
         this.abilities = new ArrayList<>();
@@ -53,7 +53,9 @@ public class BossWave extends AbstractWave
     @Override
     public Map<MACreature,Integer> getMonstersToSpawn(int wave, int playerCount, Arena arena) {
         Map<MACreature,Integer> result = new HashMap<>();
-        result.put(monster, 1);
+        for(MACreature creature : monster) {
+            result.put(creature, 1);
+        }
         return result;
     }
 

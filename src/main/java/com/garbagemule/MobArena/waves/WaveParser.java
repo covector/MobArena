@@ -258,9 +258,9 @@ public class WaveParser
     }
 
     private static Wave parseBossWave(Arena arena, String name, ConfigurationSection config) {
-        MACreature monster = getSingleMonster(arena, name, config);
+        List<MACreature> monsters = getBossMonster(arena, name, config);
 
-        BossWave result = new BossWave(monster);
+        BossWave result = new BossWave(monsters);
 
         // Check if there's a specific boss name
         String bossName = config.getString("name", null);
@@ -363,6 +363,19 @@ public class WaveParser
         }
 
         MACreature result = MACreature.fromString(monster);
+        if (result == null) {
+            throw new ConfigError("Failed to parse monster for wave " + name + " of arena " + arena.configName() + ": " + monster);
+        }
+        return result;
+    }
+
+    private static List<MACreature> getBossMonster(Arena arena, String name, ConfigurationSection config) {
+        String monster = config.getString("monster", null);
+        if (monster == null || monster.isEmpty()) {
+            throw new ConfigError("Missing 'monster' node for wave " + name + " of arena " + arena.configName());
+        }
+        
+        List<MACreature> result = WaveUtils.evaluateBooleanBoss(monster);
         if (result == null) {
             throw new ConfigError("Failed to parse monster for wave " + name + " of arena " + arena.configName() + ": " + monster);
         }

@@ -651,10 +651,6 @@ public class ArenaListener
     public void onEntityDamage(EntityDamageEvent event) {
         Entity damagee = event.getEntity();
 
-        if (damagee instanceof LivingEntity && damagee.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE)) {
-            return;
-        }
-
         EntityDamageByEntityEvent edbe = (event instanceof EntityDamageByEntityEvent) ? (EntityDamageByEntityEvent) event : null;
         Entity damager = null;
 
@@ -670,6 +666,15 @@ public class ArenaListener
 
             if (damager instanceof TNTPrimed) {
                 damager = ((TNTPrimed) damager).getSource();
+            }
+        }
+
+        if (damagee instanceof LivingEntity && damagee.getPersistentDataContainer().has(allyMonsterKey, PersistentDataType.BYTE)) {
+            if (damager instanceof Player) {
+                event.setCancelled(true);
+                return;
+            } else {
+                return;
             }
         }
 

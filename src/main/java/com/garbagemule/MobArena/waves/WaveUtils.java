@@ -141,4 +141,101 @@ public class WaveUtils
                 }
             };
     }
+
+    public static List<MACreature> evaluateBooleanBoss(String exp) {
+        String stripped = exp.replaceAll("\\s", "");
+        // find ||
+        int orIndex = stripped.indexOf("||");
+        if (orIndex != -1) {
+            String left = stripped.substring(0, orIndex);
+            String right = stripped.substring(orIndex + 2);
+            return evaluateBossOr(left, right);
+        }
+        // find &&
+        int andIndex = stripped.indexOf("&&");
+        if (andIndex != -1) {
+            String left = stripped.substring(0, andIndex);
+            String right = stripped.substring(andIndex + 2);
+            return evaluateBossAnd(left, right);
+        }
+        // find ()
+        int openIndex = stripped.indexOf("(");
+        if (openIndex != -1) {
+            int closeIndex = stripped.indexOf(")");
+            if (closeIndex == -1) {
+                throw new IllegalArgumentException("Invalid boolean boss expression (mismatched brackets): " + exp);
+            }
+            String left = stripped.substring(0, openIndex);
+            boolean leftIsAnd = left.endsWith("&&");
+            left = left.length() >= 2 ? left.substring(0, left.length() - 2) : left;
+            String inside = stripped.substring(openIndex + 1, closeIndex);
+            String right = stripped.substring(closeIndex + 1);
+            boolean rightIsAnd = right.startsWith("&&");
+            right = right.length() >= 2 ? right.substring(2) : right;
+            if (rightIsAnd) {
+                // do inside and right first then left
+                List<MACreature> insideAndRight = evaluateBossAnd(inside, right.substring(2));
+                return leftIsAnd ? evaluateBossAnd(left, insideAndRight) : evaluateBossOr(left, insideAndRight);
+            } else {
+                // do left and inside then right
+                List<MACreature> leftAndInside = leftIsAnd ? evaluateBossAnd(left, inside) : evaluateBossOr(left, inside);  
+                return evaluateBossOr(leftAndInside, right);
+            }
+        }
+        // return single
+        List<MACreature> result = new ArrayList<>();
+        result.add(MACreature.fromString(exp));
+        return result;
+    }
+
+    private static List<MACreature> evaluateBossAnd(String left, String right) {
+        List<MACreature> result = new ArrayList<>();
+        if (left != null && !left.isEmpty())
+            result.addAll(evaluateBooleanBoss(left));
+        if (right != null && !right.isEmpty())
+            result.addAll(evaluateBooleanBoss(right));
+        return result;
+    }
+
+    private static List<MACreature> evaluateBossAnd(String left, List<MACreature> right) {
+        List<MACreature> result = new ArrayList<>();
+        if (left != null && !left.isEmpty())
+            result.addAll(evaluateBooleanBoss(left));
+        if (right != null && !right.isEmpty())
+            result.addAll(right);
+        return result;
+    }
+
+    private static List<MACreature> evaluateBossOr(String left, String right) {
+        List<MACreature> result = new ArrayList<>();
+        if (left == null || left.isEmpty())
+            result.addAll(evaluateBooleanBoss(right));
+        else if (right == null || right.isEmpty())
+            result.addAll(evaluateBooleanBoss(left));
+        else 
+            result.addAll(Math.random() < 0.5 ? evaluateBooleanBoss(left) : evaluateBooleanBoss(right));
+        return result;
+    }
+
+    private static List<MACreature> evaluateBossOr(String left, List<MACreature> right) {
+        List<MACreature> result = new ArrayList<>();
+        if (left == null || left.isEmpty())
+            result.addAll(right);
+        else if (right == null || right.isEmpty())
+            result.addAll(evaluateBooleanBoss(left));
+        else 
+            result.addAll(Math.random() < 0.5 ? evaluateBooleanBoss(left) : right);
+        return result;
+    }
+
+    private static List<MACreature> evaluateBossOr(List<MACreature> left, String right) {
+        List<MACreature> result = new ArrayList<>();
+        if (left == null || left.isEmpty())
+            result.addAll(evaluateBooleanBoss(right));
+        else if (right == null || right.isEmpty())
+            result.addAll(left);
+        else 
+            result.addAll(Math.random() < 0.5 ? left : evaluateBooleanBoss(right));
+        return result;
+    }
 }
