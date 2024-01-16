@@ -53,6 +53,18 @@ public class PickClassCommand implements Command
 
         // Grab the ArenaClass, if it exists
         String slug = Slugs.create(args[0]);
+
+        // random class selection fix
+        if (slug.equalsIgnoreCase("random")) {
+            arena.addRandomPlayer(p);
+            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_RANDOM);
+            ClassLimitManager clm = arena.getClassLimitManager();
+            ArenaClass oldAC = arena.getArenaPlayer(p).getArenaClass();
+            clm.playerLeftClass(oldAC, p);
+            p.getInventory().clear();
+            return true;
+        }
+
         ArenaClass ac = am.getClasses().get(slug);
         if (ac == null) {
             arena.getMessenger().tell(p, Msg.LOBBY_NO_SUCH_CLASS, slug);
@@ -90,6 +102,7 @@ public class PickClassCommand implements Command
         clm.playerPickedClass(ac, p);
 
         if (!slug.equalsIgnoreCase("random")) {
+            arena.removeRandomPlayer(p);
             if (arena.getSettings().getBoolean("use-class-chests", false)) {
                 if (ClassChests.assignClassFromStoredClassChest(arena, p, ac)) {
                     return true;

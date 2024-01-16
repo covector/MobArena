@@ -829,6 +829,7 @@ public class ArenaImpl implements Arena
             if (ap.getArenaClass() != null) {
                 limitManager.playerLeftClass(ap.getArenaClass(), ap.getPlayer());
             }
+            removeRandomPlayer(p);
 
             // Last lobby player leaving? Stop the timer
             if (lobbyPlayers.size() == 1) {
@@ -912,6 +913,9 @@ public class ArenaImpl implements Arena
         removePotionEffects(p);
 
         specPlayers.add(p);
+
+        // set spectators to adventure mode
+        p.setGameMode(org.bukkit.GameMode.ADVENTURE);
 
         if (settings.getBoolean("spectate-on-death", true)) {
             // At this point, we know that we want players to become
@@ -1320,6 +1324,18 @@ public class ArenaImpl implements Arena
     }
 
     @Override
+    public boolean inRandoms(Player p) {
+        return randoms.contains(p);
+    }
+
+    @Override
+    public void removeRandomPlayer(Player p) {
+        if (inRandoms(p)) {
+            randoms.remove(p);
+        }
+    }
+
+    @Override
     public void assignRandomClass(Player p)
     {
         List<ArenaClass> classes = this.classes.values().stream()
@@ -1334,6 +1350,15 @@ public class ArenaImpl implements Arena
 
         int index = MobArena.random.nextInt(classes.size());
         String slug = classes.get(index).getSlug();
+
+        ArenaClass ac = plugin.getArenaMaster().getClasses().get(slug);
+
+        if (getSettings().getBoolean("use-class-chests", false)) {
+            if (ClassChests.assignClassFromStoredClassChest(this, p, ac)) {
+                return;
+            }
+            // No linked chest? Fall through to config-file
+        }
 
         assignClass(p, slug);
         messenger.tell(p, Msg.LOBBY_CLASS_PICKED, this.classes.get(slug).getConfigName());

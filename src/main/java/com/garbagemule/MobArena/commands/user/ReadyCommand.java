@@ -31,7 +31,7 @@ public class ReadyCommand implements Command {
             am.getGlobalMessenger().tell(p, Msg.NOT_IN_LOBBY);
         } else if (!arena.inLobby(p)) {
             arena.getMessenger().tell(p, Msg.NOT_IN_LOBBY);
-        } else if (arena.getArenaPlayer(p).getArenaClass() != null) {
+        } else if (arena.getArenaPlayer(p).getArenaClass() != null || arena.inRandoms(p)) {
             arena.getMessenger().tell(p, Msg.LOBBY_PLAYER_READY);
             arena.playerReady(p);
         } else {

@@ -1189,7 +1189,7 @@ public class ArenaListener
     }
 
     private void handleReadyBlock(Player p) {
-        if (arena.getArenaPlayer(p).getArenaClass() != null) {
+        if (arena.getArenaPlayer(p).getArenaClass() != null || arena.inRandoms(p)) {
             arena.getMessenger().tell(p, Msg.LOBBY_PLAYER_READY);
             arena.playerReady(p);
         }
@@ -1215,6 +1215,14 @@ public class ArenaListener
         }
 
         ArenaClass oldAC = arena.getArenaPlayer(p).getArenaClass();
+
+        // random class selection fix
+        if (slug.equalsIgnoreCase("random")) {
+            classLimits.playerLeftClass(oldAC, p);
+            p.getInventory().clear();
+            delayAssignClass(p, slug, null, sign);
+            return;
+        }
 
         // Same class, do nothing.
         if (newAC.equals(oldAC)) {
@@ -1260,6 +1268,7 @@ public class ArenaListener
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin,new Runnable() {
             public void run() {
                 if (!slug.equalsIgnoreCase("random")) {
+                    arena.removeRandomPlayer(p);
                     if (useClassChests) {
                         ArenaClass ac = plugin.getArenaMaster().getClasses().get(slug);
                         if (ClassChests.assignClassFromStoredClassChest(arena, p, ac)) {

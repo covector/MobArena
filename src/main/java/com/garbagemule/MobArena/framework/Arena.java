@@ -178,7 +178,6 @@ public interface Arena
     void queueRepairable(Repairable r);
 
 
-
     /*////////////////////////////////////////////////////////////////////
     //
     //      Items & Cleanup
@@ -190,6 +189,10 @@ public interface Arena
     void assignClassGiveInv(Player p, String className, ItemStack[] contents);
 
     void addRandomPlayer(Player p);
+
+    boolean inRandoms(Player p);
+
+    void removeRandomPlayer(Player p);
 
     void assignRandomClass(Player p);
 
